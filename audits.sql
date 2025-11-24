@@ -1,0 +1,38 @@
+-- =============================================
+-- TABLA DE AUDITORÍA PARA PROPERTY (LA MÁS IMPORTANTE)
+-- =============================================
+CREATE TABLE INMOBIX.PROPERTY_AUDIT (
+    AUDIT_ID           BIGSERIAL PRIMARY KEY,
+    OPERATION          CHAR(1)   NOT NULL,        -- I = Insert, U = Update, D = Delete
+    AUDIT_TIMESTAMP    TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    AUDIT_USER         TEXT        DEFAULT CURRENT_USER NOT NULL,
+    AUDIT_SESSION_USER TEXT        DEFAULT SESSION_USER NOT NULL,
+    
+    -- Campos antiguos (para UPDATE y DELETE)
+    OLD_ID                VARCHAR(4),
+    OLD_ADDRESS           VARCHAR(50),
+    OLD_ESTIMATED_WIDTH   INTEGER,
+    OLD_ESTIMATED_DEPTH   INTEGER,
+    OLD_BOUNDARIES        VARCHAR(500),
+    OLD_STRATUM           VARCHAR(4),
+    OLD_IS_ACTIVE         CHAR(1),
+    OLD_CTY_DPT_ID        VARCHAR(4),
+    OLD_CTY_ID            VARCHAR(4),
+    OLD_CET_NDOCUMENT     VARCHAR(10),
+    
+    -- Campos nuevos (para INSERT y UPDATE)
+    NEW_ID                VARCHAR(4),
+    NEW_ADDRESS           VARCHAR(50),
+    NEW_ESTIMATED_WIDTH   INTEGER,
+    NEW_ESTIMATED_DEPTH   INTEGER,
+    NEW_BOUNDARIES        VARCHAR(500),
+    NEW_STRATUM           VARCHAR(4),
+    NEW_IS_ACTIVE         CHAR(1),
+    NEW_CTY_DPT_ID        VARCHAR(4),
+    NEW_CTY_ID            VARCHAR(4),
+    NEW_CET_NDOCUMENT     VARCHAR(10)
+);
+
+-- Índice para consultas rápidas de auditoría
+CREATE INDEX IDX_PROPERTY_AUDIT_TIMESTAMP ON INMOBIX.PROPERTY_AUDIT(AUDIT_TIMESTAMP DESC);
+CREATE INDEX IDX_PROPERTY_AUDIT_ID        ON INMOBIX.PROPERTY_AUDIT(NEW_ID, OLD_ID);
